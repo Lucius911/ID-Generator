@@ -1,0 +1,85 @@
+﻿@page "/"
+@using IDNumberGenerator.Data
+
+<PageTitle>ID Number</PageTitle>
+
+
+<MatCard Class="col-md-12">
+  <MatCardContent>
+    <EditForm Model="Details" OnValidSubmit="Success">
+      <DataAnnotationsValidator />
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <MatH5>
+            Please complete the following details
+          </MatH5>
+          <br />
+          <br />
+          <MatH5>Gender</MatH5>
+          <MatRadioGroup TValue="int" @bind-Value="this.Details.Gender">
+            <MatRadioButton Value="1" TValue="int">Male</MatRadioButton>
+            <MatRadioButton Value="2" TValue="int">Female</MatRadioButton>
+          </MatRadioGroup>
+
+          <br />
+          <br />
+          <MatH5>
+            Date Of Birth
+          </MatH5>
+          <MatDatePicker TValue="DateTime" @bind-Value="Details.DateOfBirth" Format="yyyy/MM/dd"></MatDatePicker>
+
+          <br />
+          <br />
+          <MatButton Raised="true" TrailingIcon="info">Submit</MatButton>
+          <br />
+          <br />
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+    </EditForm>
+  </MatCardContent>
+</MatCard>
+
+@code
+{
+  [Inject]
+  protected IMatToaster _toaster { get; set; }
+
+  public IdNumberModel Details { get; set; } = new IdNumberModel();
+  private string GeneratedIdNumber { get; set; } = "";
+
+  private async Task Success(EditContext obj)
+  {
+    var year = Details.DateOfBirth.Year;
+    var month = Details.DateOfBirth.Month.ToString("d2");
+    var day = Details.DateOfBirth.Day;
+
+    var gender = Details.Gender;
+
+    //940715 552 5080
+
+    //females range 0000-4999
+    //males range 5000-9999
+
+    var genderNumber = gender switch
+    {
+      1 => new Random().Next(5000, 9999),
+      2 => new Random().Next(0000, 4999),
+      _ => 0
+    };
+
+    var result = year.ToString().Substring(2, 2) + month + day;
+
+    var threeNumbers = new Random().Next(100, 999);
+
+    this.GeneratedIdNumber = result + threeNumbers.ToString() + genderNumber.ToString();
+
+    _toaster.Add($"ID Number generated: {this.GeneratedIdNumber}", MatToastType.Success, configure: options =>
+    {
+      options.VisibleStateDuration = 100000;
+    });
+
+    await this.InvokeAsync(this.StateHasChanged).ConfigureAwait(false);
+  }
+}

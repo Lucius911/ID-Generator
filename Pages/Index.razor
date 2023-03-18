@@ -1,46 +1,62 @@
 ﻿@page "/"
 @using IDNumberGenerator.Data
 
-<PageTitle>ID Number</PageTitle>
+<PageTitle>ID Number Generator</PageTitle>
 
+<div class="row">
+  <MatAppBarContainer>
+    <MatAppBar Fixed="true">
+      <MatAppBarRow>
+        <MatAppBarSection>
+          @*<MatIconButton Icon="Menu"></MatIconButton>*@
+          <MatAppBarTitle>South African ID Number generator</MatAppBarTitle>
+        </MatAppBarSection>
+        <MatAppBarSection Align="MatAppBarSectionAlign.End">
+          <MatIconButton Icon="favorite"></MatIconButton>
+        </MatAppBarSection>
+      </MatAppBarRow>
+    </MatAppBar>
+  </MatAppBarContainer>
+</div>
 
-<MatCard Class="col-md-12">
-  <MatCardContent>
-    <EditForm Model="Details" OnValidSubmit="Success">
-      <DataAnnotationsValidator />
-      <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
-          <MatH5>
-            Please complete the following details
-          </MatH5>
-          <br />
-          <br />
-          <MatH5>Gender</MatH5>
-          <MatRadioGroup TValue="int" @bind-Value="this.Details.Gender">
-            <MatRadioButton Value="1" TValue="int">Male</MatRadioButton>
-            <MatRadioButton Value="2" TValue="int">Female</MatRadioButton>
-          </MatRadioGroup>
+<div class="row" style="margin-top: 5%; font-family: Helvetica">
+  <MatCard Class="col-md-12">
+    <MatCardContent>
+      <EditForm Model="Details" OnValidSubmit="Success">
+        <DataAnnotationsValidator />
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <MatH5 Style="font-family: Helvetica">
+              Please complete the following details
+            </MatH5>
+            <br />
+            <br />
+            <MatH5 Style="font-family: Helvetica">Gender</MatH5>
+            <MatRadioGroup TValue="int" @bind-Value="this.Details.Gender">
+              <MatRadioButton Value="1" TValue="int">Male</MatRadioButton>
+              <MatRadioButton Value="2" TValue="int">Female</MatRadioButton>
+            </MatRadioGroup>
 
-          <br />
-          <br />
-          <MatH5>
-            Date Of Birth
-          </MatH5>
-          <MatDatePicker TValue="DateTime" @bind-Value="Details.DateOfBirth" Format="yyyy/MM/dd"></MatDatePicker>
+            <br />
+            <br />
+            <MatH5 Style="font-family: Helvetica">
+              Date Of Birth
+            </MatH5>
+            <MatDatePicker TValue="DateTime" @bind-Value="Details.DateOfBirth" Format="yyyy/MM/dd"></MatDatePicker>
 
-          <br />
-          <br />
-          <MatButton Raised="true" TrailingIcon="info">Submit</MatButton>
-          <br />
-          <br />
+            <br />
+            <br />
+            <MatButton Style="font-family: Helvetica" Raised="true" TrailingIcon="info">Generate ID Number </MatButton>
+            <br />
+            <br />
+          </div>
+          <div class="col-md-2"></div>
         </div>
-        <div class="col-md-2"></div>
-      </div>
-    </EditForm>
-  </MatCardContent>
-</MatCard>
-
+      </EditForm>
+    </MatCardContent>
+  </MatCard>
+</div>
 @code
 {
   [Inject]
@@ -51,16 +67,24 @@
 
   private async Task Success(EditContext obj)
   {
+    if (Details.Gender == 0)
+    {
+      _toaster.Add($"Please select a valid Gender", MatToastType.Danger);
+      return;
+    }
+
+    if (Details.DateOfBirth == DateTime.MinValue)
+    {
+      _toaster.Add($"Please select a date of birth", MatToastType.Danger);
+      return;
+    }
+
+
     var year = Details.DateOfBirth.Year;
     var month = Details.DateOfBirth.Month.ToString("d2");
     var day = Details.DateOfBirth.Day;
 
     var gender = Details.Gender;
-
-    //940715 552 5080
-
-    //females range 0000-4999
-    //males range 5000-9999
 
     var genderNumber = gender switch
     {

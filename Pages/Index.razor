@@ -56,6 +56,14 @@
       </EditForm>
     </MatCardContent>
   </MatCard>
+  
+  <MatCard Class="col-md-12" Style="margin-top: 2%">
+    <MatCardContent>
+      <p Style="font-family: Helvetica">
+        Please report any issues <a href="https://github.com/Lucius911/ID-Generator/issues">here</a>
+      </p>
+    </MatCardContent>
+  </MatCard>
 </div>
 @code
 {
@@ -82,7 +90,7 @@
 
     var year = Details.DateOfBirth.Year;
     var month = Details.DateOfBirth.Month.ToString("d2");
-    var day = Details.DateOfBirth.Day;
+    var day = Details.DateOfBirth.Day.ToString("d2");
 
     var gender = Details.Gender;
 
